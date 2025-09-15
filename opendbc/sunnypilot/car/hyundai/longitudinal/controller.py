@@ -82,7 +82,7 @@ class LongitudinalController:
     """Update tuning parameters every 3 seconds."""
     if self._param_update_counter % int(3.0 / (DT_CTRL * 2)) == 0:
       self._get_tuning_params_dict(CC_SP)
-    self._param_update_counter = (self._param_update_counter + 1) % 1000000
+    self._param_update_counter = (self._param_update_counter + 1) % 100000
 
   @property
   def enabled(self) -> bool:
@@ -112,12 +112,8 @@ class LongitudinalController:
       return
 
     # Keep track of time in stopping state (in control cycles)
-    if self.CP.carFingerprint == CAR.KIA_NIRO_EV:
-      if self.stopping_count > 1.0 / DT_CTRL:
-        self.stopping = True
-    else:
-      if self.stopping_count > 1 / (DT_CTRL * 2):
-        self.stopping = True
+    if self.stopping_count > 1 / (DT_CTRL * 2):
+      self.stopping = True
 
     self.stopping_count += 1
 

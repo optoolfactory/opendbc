@@ -37,7 +37,7 @@ def create_config_from_params(params_dict: dict[str, str], base_config: CarTunin
 def get_car_config(CP: structs.CarParams, params_dict: dict[str, str] = None) -> CarTuningConfig:
   base_config = _get_base_config(CP)
 
-  if params_dict and int(params_dict.get("LongTuningCustomToggle", "0")) == 1:
+  if params_dict and int(params_dict.get("LongTuningCustomToggle", 0)) == 1:
     return create_config_from_params(params_dict, base_config)
 
   return base_config
