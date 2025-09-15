@@ -10,7 +10,7 @@ from dataclasses import dataclass
 
 from opendbc.car import structs, DT_CTRL
 from opendbc.car.interfaces import CarStateBase
-from opendbc.car.hyundai.values import CarControllerParams, CAR, HyundaiFlags
+from opendbc.car.hyundai.values import CarControllerParams, HyundaiFlags
 from opendbc.sunnypilot.car import get_param
 from opendbc.sunnypilot.car.hyundai.longitudinal.helpers import get_car_config, jerk_limited_integrator, ramp_update, \
                                                                 LongitudinalTuningType
@@ -70,12 +70,12 @@ class LongitudinalController:
   def _get_tuning_params_dict(self, CC_SP) -> None:
     """Update car config when tuning parameters change."""
     params_list = CC_SP.params
-    self.long_tuning_param = int(get_param(params_list, "HyundaiLongitudinalTuning", str(LongitudinalTuningType.OFF)))
+    self.long_tuning_param = get_param(params_list, "HyundaiLongitudinalTuning", LongitudinalTuningType.OFF)
     if self.long_tuning_param != LongitudinalTuningType.OFF:
-      tuning_values = tuple(getattr(p, 'value', '') for p in params_list if getattr(p, 'key', '').startswith('LongTuning'))
+      tuning_values = tuple(p.value.decode('utf-8') if hasattr(p, 'value') else '' for p in params_list if p.key.startswith('LongTuning'))
       if tuning_values != self._last_tuning_params:
         self._last_tuning_params = tuning_values
-        self._tuning_params_dict = {p.key: p.value for p in params_list if p.key.startswith('LongTuning')}
+        self._tuning_params_dict = {p.key: p.value.decode('utf-8') for p in params_list if p.key.startswith('LongTuning')}
         self.car_config = get_car_config(self.CP, self._tuning_params_dict)
 
   def _update_tuning_params(self, CC_SP) -> None:
