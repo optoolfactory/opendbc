@@ -285,7 +285,7 @@ class CarState(CarStateBase, CarStateExt):
 
     self.frame += 1
 
-    CarStateExt.update(self, ret, can_parsers)
+    CarStateExt.update(self, ret, ret_sp, can_parsers)
 
     return ret, ret_sp
 
@@ -331,8 +331,13 @@ class CarState(CarStateBase, CarStateExt):
     pt_messages = [
       ("BLINKERS_STATE", float('nan')),
     ]
+    cam_messages = []
+    cam_messages += [
+      ("RSA1", 0),
+      ("RSA2", 0),
+    ]
 
     return {
       Bus.pt: CANParser(DBC[CP.carFingerprint][Bus.pt], pt_messages, 0),
-      Bus.cam: CANParser(DBC[CP.carFingerprint][Bus.pt], [], 2),
+      Bus.cam: CANParser(DBC[CP.carFingerprint][Bus.pt], cam_messages, 2),
     }
